@@ -4,15 +4,12 @@ import joblib
 import lightgbm as lgb 
 from geopy.distance import geodesic
 
-model = joblib.load("fraud_detection_model.jb")
-# Load the label encoder for categorical features
-encoder = joblib.load("label_encoder.jb")
-#load the encoder for the merchant and category
+model = joblib.load("fraud_detection_model.jb") #Load the label encoder for categorical features
+encoder = joblib.load("label_encoder.jb") #load the encoder for the merchant and category
 
 def haversine(lat1, lon1, lat2, lon2):
     return geodesic((lat1, lon1),(lat2,lon2)).km
-#create a function to calculate the distance between two points
-# using the geopy library 
+#create a function to calculate the distance between two points using the geopy library 
 
 st.title("Fraud Detection System")
 st.write("Enter the Transaction details Below")
@@ -26,20 +23,17 @@ merch_lat = st.number_input("Merchant Latitude",format="%.6f")
 merch_long = st.number_input("Merchant Longitude",format="%.6f")
 hour = st.slider("Transaction Hour",0,23,12)
 day =st.slider("Transaction Day",1,31,15)
-#month = st.slider("Transaction MOnth",1,12,6)
-#gender = st.selectbox("Gender",["Male","Female"])
 cc_num = st.text_input("Credit Card number")
 
 distance = haversine(lat,long,merch_lat,merch_long)
-#prepocessing the input data 
 
 #create a button to check for fraud
 if st.button("Check For Fraud"):
     if merchant and category and cc_num: #create a dataframe to hold the input data
-        input_data = pd.DataFrame([[merchant, category,amt,distance,hour,day,cc_num]], #month,gender,
-                                  columns=['merchant','category','amt','distance','hour','day','cc_num']) #,'month','gender'
+        input_data = pd.DataFrame([[merchant, category,amt,distance,hour,day,cc_num]],
+                                  columns=['merchant','category','amt','distance','hour','day','cc_num'])
         
-        categorical_col = ['merchant','category'] #,'gender'
+        categorical_col = ['merchant','category']
         for col in categorical_col:
             try:
                 input_data[col] = encoder[col].transform(input_data[col])
